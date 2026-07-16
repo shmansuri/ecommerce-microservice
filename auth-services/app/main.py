@@ -1,5 +1,9 @@
 from fastapi import FastAPI, Request
-from .routers import health
+from .routers import health, auth
+from app.core.database import Base, SessionLocal, engine
+from app.models.user import User
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Auth Service",
@@ -8,6 +12,9 @@ app = FastAPI(
 )
 
 
-app.include_router(health.router)
+
+app.include_router(health.router, prefix="/api/v1")
+app.include_router(auth.router, prefix="/api/v1")
+
 
 

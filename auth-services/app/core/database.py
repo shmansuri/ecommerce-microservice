@@ -5,7 +5,7 @@ DATABASE_URL = "sqlite:///./site.db"
 
 engine = create_engine(DATABASE_URL)
 
-sessionLocal = sessionmaker(
+SessionLocal = sessionmaker(
     autocommit=False, 
     autoflush=False,
     bind=engine,
@@ -14,8 +14,8 @@ sessionLocal = sessionmaker(
 Base= declarative_base()
 
 def get_db():
-    db=sessionLocal()
+    db=SessionLocal()
     try:
         yield db
-    except:
+    finally:
         db.close()
