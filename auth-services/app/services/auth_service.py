@@ -3,6 +3,7 @@ from fastapi import Depends, Response, status,HTTPException
 from app.repositories.user_repository import get_user_by_email, create_user
 from app.models.user import User
 from app.core.password import hash_pwd, verify_hash
+from app.core.token import create_access_token, create_refresh_token, verify_token_type, decode_token
 
 
 
@@ -31,8 +32,22 @@ async def login(data, db:Session):
     if not verify_hash(data.password, user.hashed_password):
         raise HTTPException(status_code=401, detail='invalid email or password')
     
+    access_token = create_access_token({
+        "sub": str(user.id),
+        "email": user.email
+    })
+
+    refresh_token = create_refresh_token({
+        "sub": str(user.id),
+        "email": user.email
+    })
+    
     return {
         'status': "success",
-        'message': "Login successfull"
+        'message': "Login successfull",
+        'access_token': access_token,
+        'refresh_token': refresh_token,
+        "token_type": "bearer"
+
     }
 
