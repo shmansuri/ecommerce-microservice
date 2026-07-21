@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request
-from .routers import health, auth
+from .routers import health, auth, user
 from app.core.database import Base, SessionLocal, engine
 from app.models.user import User
 
@@ -15,6 +15,7 @@ app = FastAPI(
 
 app.include_router(health.router, prefix="/api/v1")
 app.include_router(auth.router, prefix="/api/v1")
+app.include_router(user.router, prefix="/api/v1")
 
 
 
