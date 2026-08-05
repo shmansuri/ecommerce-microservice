@@ -329,3 +329,22 @@ By completing this roadmap, you should be able to:
 - Integrate Redis, Celery, and RabbitMQ
 - Deploy Applications on AWS
 - Explain architecture decisions confidently in interviews
+
+
+
+Product-services
+Category
+    ↓
+Product
+    ↓
+CRUD API
+    ↓
+Docker
+    ↓
+Pagination + filtering
+    ↓
+ProductImage
+    ↓
+Variant
+    ↓
+Elasticsearch
