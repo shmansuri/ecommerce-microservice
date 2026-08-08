@@ -20,6 +20,11 @@ class CategoryResponse(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+class CategoryCreateResponse(BaseModel):
+    status: str
+    message: str
+    data: CategoryResponse
+
 
 class CategoryUpdate(BaseModel):
     name : Annotated[str | None, StringConstraints(min_length=2, max_length=100)] = None

@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session
-from fastapi import Depends, Response, status,HTTPException
+from fastapi import HTTPException
 from app.repositories.user_repository import get_user_by_email, create_user
 from app.models.user import User
 from app.core.password import hash_pwd, verify_hash
-from app.core.token import create_access_token, create_refresh_token, verify_token_type, decode_token
+from app.core.token import create_access_token, create_refresh_token
 
 
 

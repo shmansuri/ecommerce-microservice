@@ -2,3 +2,10 @@ venv/
 .env/
 venvv/
 
+__pycache__/
+*.pyc
+.venv/
+venv/
+.git/
+.gitignore
+.env

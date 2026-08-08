@@ -3,6 +3,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import Numeric
 from app.core.database import Base
 from datetime import datetime
+from app.models.product_variant import ProductVariant
+from app.models.product_image import ProductImage
 
 
 class Product(Base):

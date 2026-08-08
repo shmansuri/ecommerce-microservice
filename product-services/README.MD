@@ -16,6 +16,7 @@ written code follow
     Category Repository
         create_category()
         get_category_by_id()
+        get_category_by_name()
         get_category_by_slug()
         get_all_categories()
         update_category()

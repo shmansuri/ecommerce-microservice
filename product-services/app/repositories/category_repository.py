@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.category import Category
+from sqlalchemy import func
 
 
 def create_category(db: Session, category: Category)-> Category:
@@ -12,8 +13,11 @@ def create_category(db: Session, category: Category)-> Category:
 def get_category_by_id(db:Session, category_id: int) -> Category | None:
     return db.query(Category).filter(Category.id == category_id).first()
 
+def get_category_by_name(db:Session, category_name: str) -> Category | None:
+    return db.query(Category).filter(func.lower(Category.name) == category_name.lower()).first()
+
 def get_category_by_slug(db: Session, slug:str) -> Category | None:
-    return db.query(Category).filter(Category.slug == slug).first()
+    return db.query(Category).filter(func.lower(Category.slug) == slug.lower()).first()
 
 def get_all_categories(db:Session) -> list[Category]:
     return db.query(Category).all()
@@ -24,7 +28,7 @@ def update_category(db: Session, category:Category)->Category:
     return category
     
 
-def delete_category(db:Session, category:Category)-> None:
-    db.delete(category)
+def delete_category(db:Session, id:int)-> None:
+    db.delete(id)
     db.commit()
    
