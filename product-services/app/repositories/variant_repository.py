@@ -22,3 +22,11 @@ def update_variant(db:Session, variant: ProductVariant) -> ProductVariant:
 def delete_variant(db:Session, variant:ProductVariant)-> None:
     db.delete(variant)
     db.commit()
+
+def get_variant_by_sku(
+    db: Session,
+    sku: str
+) -> ProductVariant | None:
+    return db.query(ProductVariant).filter(
+        ProductVariant.sku == sku
+    ).first()

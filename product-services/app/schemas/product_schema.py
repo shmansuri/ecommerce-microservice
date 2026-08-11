@@ -30,3 +30,22 @@ class ProductUpdate(BaseModel):
     slug : Annotated[str | None, StringConstraints(min_length=2, max_length=512)]
     description : Annotated[str | None, StringConstraints(min_length=2, max_length=200)]
     is_active : bool | None = None
+
+class ProductCreateResponse(BaseModel):
+    status:str
+    message:str
+    data: ProductResponse
+
+
+class PaginationResponse(BaseModel):
+    page: int
+    limit: int
+    total: int
+    total_pages: int
+
+
+class ProductListResponse(BaseModel):
+    success: bool
+    message: str
+    data: list[ProductResponse]
+    pagination: PaginationResponse
