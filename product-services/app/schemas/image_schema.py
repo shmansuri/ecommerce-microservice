@@ -1,4 +1,4 @@
-from pydantic import BaseModel, StringConstraints
+from pydantic import BaseModel, StringConstraints, ConfigDict
 from typing import Annotated
 from datetime import datetime
 
@@ -15,6 +15,8 @@ class ProductImageResponse(BaseModel):
     is_primary : bool
     created_at : datetime
     updated_at : datetime
+
+    model_config = ConfigDict(from_attributes=True)
 
 class ProductImageUpdate(BaseModel):
     product_id : int | None = None

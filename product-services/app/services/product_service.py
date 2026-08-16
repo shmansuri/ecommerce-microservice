@@ -7,7 +7,8 @@ from app.repositories.product_repository import(
     get_product_by_slug,
     get_all_products,
     delete_product, 
-    search_products
+    search_products,
+    get_product_details
 )
 from app.models.product import Product
 
@@ -95,4 +96,19 @@ def delete_product_service(db: Session, product_id: int):
 
 def search_product_service(q, page, limit, db:Session):
     return search_products(db, q, page, limit)
-    
+
+
+def get_product_detail_service(
+    product_id: int,
+    db: Session
+):
+
+    product = get_product_details(db, product_id)
+
+    if product is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Product not found"
+        )
+
+    return product

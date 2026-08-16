@@ -1,6 +1,9 @@
 from pydantic import StringConstraints, BaseModel, ConfigDict
 from typing import Annotated
 from datetime import datetime
+from app.schemas.category_schema import CategoryResponse
+from app.schemas.image_schema import ProductImageResponse
+from app.schemas.variant_schema import VariantResponse
 
 class ProductCreate(BaseModel):
     category_id: int
@@ -49,3 +52,10 @@ class ProductListResponse(BaseModel):
     message: str
     data: list[ProductResponse]
     pagination: PaginationResponse
+
+class ProductDetailResponse(ProductResponse):
+    category: CategoryResponse
+    images: list[ProductImageResponse]
+    variants: list[VariantResponse]
+
+    model_config = ConfigDict(from_attributes=True)

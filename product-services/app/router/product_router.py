@@ -6,7 +6,8 @@ from app.schemas.product_schema import (
     ProductCreate, 
     ProductCreateResponse, 
     ProductUpdate,
-    ProductListResponse)
+    ProductListResponse,
+    ProductDetailResponse)
 from app.services.product_service import(
     get_all_products_service,
     create_product_service,
@@ -15,6 +16,7 @@ from app.services.product_service import(
     get_product_by_slug_service,
     delete_product_service,
     search_product_service,
+    get_product_detail_service,
 )
 
 router = APIRouter(prefix='/product', tags=['products'])
@@ -31,6 +33,16 @@ async def get_all_products_router(page:int = Query(1, ge=1), limit: int = Query(
 @router.get('/search', response_model=list[ProductResponse])
 async def search_product(q:str, page:int = Query(1, ge=1), limit:int=Query(20, ge=1, le=100), db:Session=Depends(get_db)):
     return search_product_service(q, page, limit, db)
+
+@router.get(
+    "/details/{product_id}",
+    response_model=ProductDetailResponse
+)
+async def get_product_detail_router(
+    product_id: int,
+    db: Session = Depends(get_db)
+):
+    return get_product_detail_service(product_id, db)
 
 @router.get('/{id}', response_model=ProductResponse)
 async def get_product_by_id_router(id:int, db:Session = Depends(get_db)):
