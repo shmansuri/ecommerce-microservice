@@ -7,7 +7,7 @@ from app.repositories.product_repository import(
     get_product_by_slug,
     get_all_products,
     delete_product, 
-    search_service
+    search_products
 )
 from app.models.product import Product
 
@@ -20,7 +20,7 @@ def create_product_service(db:Session, data):
     create_product(db, product)
     return {
         'status':"success",
-        'msg': 'Product add successfully !',
+        'message': 'Product add successfully !',
         'data': product
     }
 
@@ -76,7 +76,7 @@ def update_product_service(db: Session, product_id: int, data):
 
     return {
         "status": "success",
-        "msg": "Product updated successfully!",
+        "message": "Product updated successfully!",
         "data": fetch_product
     }
 
@@ -94,5 +94,5 @@ def delete_product_service(db: Session, product_id: int):
     return exist_product
 
 def search_product_service(q, page, limit, db:Session):
-    return search_service(db, q, page, limit)
+    return search_products(db, q, page, limit)
     

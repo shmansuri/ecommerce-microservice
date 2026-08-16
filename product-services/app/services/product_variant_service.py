@@ -9,6 +9,8 @@ from app.repositories.variant_repository import (
     create_variant,
     get_variant_by_sku
 )
+from app.repositories.product_repository import get_product_by_id
+
 
 def create_variant_service(data, db:Session):
     existing_sku = get_variant_by_sku(db, data.sku)
@@ -18,17 +20,21 @@ def create_variant_service(data, db:Session):
             status_code=400,
             detail="SKU already exists!"
         )
-    exist_product = get_variants_by_product_id(db, data.product_id)
 
-    if exist_product is None:
-        raise HTTPException(status_code=404, detail='Product is not exist!')
+    product = get_product_by_id(db, data.product_id)
 
-    if data.discount is not None and data.discount_price >= data.price:
+    if product is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Product not found!"
+        )
+
+    if data.discount_price is not None and data.discount_price >= data.price:
         raise HTTPException(status_code=400, detail='Discount Price should lesser than the Actual Price !')
     variant = ProductVariant(**data.model_dump())
     create_variant(db, variant)
     return {
-        "status":'sucess',
+        "status":'success',
         'message': "Variant added successfully !",
         'data': variant
     }
@@ -55,16 +61,30 @@ def update_variant_service(variant_id, data, db:Session):
             raise HTTPException(status_code=400,detail="SKU already exists!")
         exist_variant.sku = data.sku
 
-    if data.product_id is not None:
-        exist_variant.product_id = data.product_id
+    new_price = (
+        data.price
+        if data.price is not None
+        else exist_variant.price
+    )
+
+    new_discount_price = (
+        data.discount_price
+        if data.discount_price is not None
+        else exist_variant.discount_price
+    )
+
+    if new_discount_price is not None and new_discount_price >= new_price:
+        raise HTTPException(
+            status_code=400,
+            detail="Discount price must be less than actual price!"
+        )
 
     if data.price is not None:
         exist_variant.price = data.price
 
     if data.discount_price is not None:
-        if data.discount_price >= exist_variant.price:
-            raise HTTPException(status_code=404, detail='discount price always be lesser than actual price!')
         exist_variant.discount_price = data.discount_price
+
     if data.stock is not None:
         exist_variant.stock = data.stock
 
@@ -80,26 +100,28 @@ def update_variant_service(variant_id, data, db:Session):
         "status": "success",
         "message": "Variant updated successfully!",
         "data": exist_variant
-    }
-    
+    }  
     
 
 def get_variants_product_id_service(product_id:int, db:Session):
-    exist_product_variant = get_variants_by_product_id(db, product_id)
+    product = get_product_by_id(db, product_id)
 
-    if exist_product_variant is None:
-        raise HTTPException(status_code=404, detail='Product is not exist!')
-    return exist_product_variant
+    if product is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Product not found!"
+        )
+    return get_variants_by_product_id(db, product_id)
 
 def delete_variant_service(variant_id:int, db:Session):
     exist_variant = get_variant_by_id(db, variant_id)
     if exist_variant is None:
         raise HTTPException(status_code= 404, detail='variant is not found!')
-    delete_variant(db, variant_id)
+    delete_variant(db, exist_variant)
     return{
         'status':'success',
         'message': 'variant deleted successfully!',
-        'variant':exist_variant
+        'data':exist_variant
     }
 
 def get_variant_by_sku_service(sku: str, db: Session):

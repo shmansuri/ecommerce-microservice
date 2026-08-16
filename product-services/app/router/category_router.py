@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, status, Depends, Query
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.schemas.category_schema import CategoryCreate, CategoryCreateResponse, CategoryUpdate, CategoryResponse
@@ -11,9 +11,14 @@ router=APIRouter(prefix='/category', tags=['category'])
 async def category_create_router(data:CategoryCreate, db:Session = Depends(get_db)):
     return category_service.create_category_service(data, db)
 
+
+@router.get('/search', response_model=list[CategoryResponse])
+async def search_category_router(q:str, page:int = Query(1,ge=1), limit:int = Query(20, ge=1, le=100), db:Session = Depends(get_db)):
+    return category_service.search_category_service(q, page, limit, db)
+
 @router.get('/categories', status_code=200)
-async def get_all_categoroies_router(db:Session = Depends(get_db)):
-    return category_service.get_all_categories_service(db)
+async def get_all_categoroies_router(page:int = Query(1,ge=1),limit:int = Query(20, ge=1, le=100),db:Session = Depends(get_db)):
+    return category_service.get_all_categories_service(db, page, limit)
 
 @router.get('/by-name/{name}', response_model=CategoryResponse)
 async def get_category_by_name_router(name:str, db:Session = Depends(get_db)):
@@ -34,3 +39,4 @@ async def category_update_router(id:int, data:CategoryUpdate, db:Session = Depen
 @router.delete('/delete/{id}')
 async def category_delete_router(id:int, db:Session = Depends(get_db)):
     return category_service.category_delete_service(id, db)
+

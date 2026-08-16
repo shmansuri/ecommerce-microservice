@@ -20,13 +20,17 @@ from app.services.product_service import(
 router = APIRouter(prefix='/product', tags=['products'])
 
 
-@router.post('/create', response_model=ProductCreateResponse, status_code=201)
+@router.post('/create', response_model=ProductCreateResponse)
 async def create_product_router(data:ProductCreate, db:Session = Depends(get_db)):
     return create_product_service(db, data)
 
 @router.get('/all', status_code=200, response_model=list[ProductResponse])
 async def get_all_products_router(page:int = Query(1, ge=1), limit: int = Query(20, ge=1, le=100), db:Session = Depends(get_db)):
     return get_all_products_service(db, page, limit)
+
+@router.get('/search', response_model=list[ProductResponse])
+async def search_product(q:str, page:int = Query(1, ge=1), limit:int=Query(20, ge=1, le=100), db:Session=Depends(get_db)):
+    return search_product_service(q, page, limit, db)
 
 @router.get('/{id}', response_model=ProductResponse)
 async def get_product_by_id_router(id:int, db:Session = Depends(get_db)):
@@ -44,6 +48,4 @@ async def update_product_router(product_id:int, data:ProductUpdate,  db:Session 
 async def delete_product_router(id:int, db:Session = Depends(get_db)):
     return delete_product_service(db, id)
 
-@router.get('/search', response_model=ProductListResponse)
-async def search_product(q:str, page:int, limit:int, db:Session=Depends(get_db)):
-    return search_product_service(q, page, limit, db)
+

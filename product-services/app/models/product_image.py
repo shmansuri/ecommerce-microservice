@@ -9,7 +9,7 @@ class ProductImage(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     product_id = Column(Integer, ForeignKey("products.id",ondelete="CASCADE"), nullable=False)
     image_url = Column(String(512), nullable=False)
-    is_primary = Column(Boolean, default=True)
+    is_primary = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, nullable= False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
     product = relationship("Product", back_populates='images')

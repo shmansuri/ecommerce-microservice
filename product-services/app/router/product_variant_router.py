@@ -26,18 +26,18 @@ async def create_variant_router(data: VariantCreate, db:Session = Depends(get_db
 async def get_variant_by_id_router(variant_id:int, db:Session = Depends(get_db)):
     return get_variant_by_id_service(variant_id, db)
 
-@router.get('/product/{product_id}', response_model=VariantResponse)
+@router.get('/product/{product_id}', response_model=list[VariantResponse])
 async def get_variant_by_product_id_router(product_id:int, db:Session = Depends(get_db)):
     return get_variants_product_id_service(product_id, db)
 
-@router.put('/update/{id}', response_model=VariantResponse)
+@router.put('/update/{variant_id}', response_model=VariantDictResponse)
 async def update_variant_router(variant_id:int, data:VariantUpdate, db:Session = Depends(get_db)):
     return update_variant_service(variant_id, data, db)
 
-@router.delete('/delete/{id}', response_model=VariantDictResponse)
+@router.delete('/delete/{variant_id}', response_model=VariantDictResponse)
 async def delete_variant_router(variant_id:int, db:Session = Depends(get_db)):
     return delete_variant_service(variant_id, db)
 
-@router.get('/sku/{sku}')
+@router.get('/sku/{sku}', response_model=VariantResponse)
 async def get_by_sku_router(sku:str, db:Session = Depends(get_db)):
     return get_variant_by_sku_service(sku, db)

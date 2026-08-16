@@ -7,7 +7,8 @@ from app.repositories.category_repository import (
     get_category_by_id,
     get_category_by_name, 
     get_category_by_slug, 
-    delete_category)
+    delete_category,
+    search_categories)
 from app.models.category import Category
 
 
@@ -34,8 +35,8 @@ def create_category_service(data, db:Session):
         'data': category_obj
     }
 
-def get_all_categories_service(db:Session):
-    return get_all_categories(db)
+def get_all_categories_service(db:Session, page, limit):
+    return get_all_categories(page, limit, db)
 
 def get_category_by_name_service(name:str, db:Session):
     name = get_category_by_name(db, name)
@@ -90,12 +91,16 @@ def category_update_service(category_id:int, data, db:Session):
     }
 
 def category_delete_service(category_id:int, db:Session):
-    exist = get_category_by_id(db, category_id)
-    if not exist:
+    exist_category = get_category_by_id(db, category_id)
+    if not exist_category:
         raise HTTPException(status_code=404, detail='category not found !')
-    delete_category(db, exist) 
+    delete_category(db, exist_category) 
     return{
         'status':'success',
         'message':"category successfully deleted",
-        'data': exist  
+        'data': exist_category  
     }
+
+
+def search_category_service(q, page, limit, db:Session):
+    return search_categories(db, q, page, limit)

@@ -20,4 +20,8 @@ class ProductImageUpdate(BaseModel):
     product_id : int | None = None
     image_url : Annotated[str | None, StringConstraints(min_length=2, max_length=512)] = None
     is_primary : bool | None = None
-    
+
+class productDictResponse(BaseModel):
+    status : str
+    message : str
+    data: ProductImageResponse

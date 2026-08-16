@@ -10,7 +10,7 @@ from app.models.product_image import ProductImage
 class Product(Base):
     __tablename__ = 'products'
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
-    category_id = Column(Integer, ForeignKey("categories.id", ondelete="CASCADE"), nullable=False)
+    category_id = Column(Integer, ForeignKey("categories.id", ondelete="RESTRICT"), nullable=False)
     name = Column(String(100), nullable=False)
     slug = Column(String, unique=True, index=True, nullable=False)
     description = Column(Text, nullable=False)

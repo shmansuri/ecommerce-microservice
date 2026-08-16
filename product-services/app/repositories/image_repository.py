@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.product_image import ProductImage
 
-
 def add_image(db:Session, image:ProductImage)-> ProductImage:
     db.add(image)
     db.commit()
