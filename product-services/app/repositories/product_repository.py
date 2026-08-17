@@ -43,4 +43,3 @@ def search_products(db:Session, q:str, page:int, limit:int)->list[Product]:
     offset = (page-1)*limit
     return db.query(Product).filter(Product.name.ilike(f"%{q}%")).offset(offset).limit(limit).all()
     
-    
