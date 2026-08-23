@@ -11,6 +11,8 @@ from app.repositories.product_repository import(
     get_product_details
 )
 from app.models.product import Product
+from app.utils.cache import get_cache, set_cache, delete_cache
+from app.schemas.product_schema import ProductDetailResponse
 
 
 def create_product_service(db:Session, data):
@@ -42,6 +44,8 @@ def get_product_by_slug_service(db:Session, slug):
 
 
 def update_product_service(db: Session, product_id: int, data):
+
+    cache_key = f"product:detail:{product_id}"
     fetch_product = get_product_by_id(db, product_id)
 
     if fetch_product is None:
@@ -75,6 +79,8 @@ def update_product_service(db: Session, product_id: int, data):
 
     update_product(db, fetch_product)
 
+    delete_cache(cache_key)
+
     return {
         "status": "success",
         "message": "Product updated successfully!",
@@ -82,6 +88,7 @@ def update_product_service(db: Session, product_id: int, data):
     }
 
 def delete_product_service(db: Session, product_id: int):
+    cache_key = f"product:detail:{product_id}"
     exist_product = get_product_by_id(db, product_id)
 
     if exist_product is None:
@@ -92,16 +99,22 @@ def delete_product_service(db: Session, product_id: int):
 
     delete_product(db, exist_product)
 
+    delete_cache(cache_key)
+
     return exist_product
 
 def search_product_service(q, page, limit, db:Session):
     return search_products(db, q, page, limit)
 
 
-def get_product_detail_service(
-    product_id: int,
-    db: Session
-):
+def get_product_detail_service( product_id: int, db: Session):
+
+    cache_key = f"product:detail:{product_id}"
+
+    cache_product = get_cache(cache_key)
+
+    if cache_product:
+        return cache_product
 
     product = get_product_details(db, product_id)
 
@@ -110,5 +123,9 @@ def get_product_detail_service(
             status_code=404,
             detail="Product not found"
         )
+
+    product_data = (ProductDetailResponse.model_validate(product).model_dump(mode='json'))
+
+    set_cache(key=cache_key, value=product_data, expire=300)
 
     return product

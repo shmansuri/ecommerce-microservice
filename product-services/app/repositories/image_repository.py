@@ -7,7 +7,7 @@ def add_image(db:Session, image:ProductImage)-> ProductImage:
     db.refresh(image)
     return image
 
-def get_image_by_id(image_id:int, db:Session)-> ProductImage:
+def get_image_by_id( db:Session, image_id:int)-> ProductImage:
     return db.query(ProductImage).filter(ProductImage.id == image_id).first()
 
 def get_images_by_product_id(db:Session, product_id:int)-> list[ProductImage]:

@@ -10,9 +10,12 @@ from app.repositories.variant_repository import (
     get_variant_by_sku
 )
 from app.repositories.product_repository import get_product_by_id
+from app.utils.cache import delete_cache
 
 
 def create_variant_service(data, db:Session):
+
+    cache_key = f"product:detail:{data.product_id}"
     existing_sku = get_variant_by_sku(db, data.sku)
 
     if existing_sku:
@@ -33,6 +36,7 @@ def create_variant_service(data, db:Session):
         raise HTTPException(status_code=400, detail='Discount Price should lesser than the Actual Price !')
     variant = ProductVariant(**data.model_dump())
     create_variant(db, variant)
+    delete_cache(cache_key)
     return {
         "status":'success',
         'message': "Variant added successfully !",
@@ -51,9 +55,11 @@ def get_variant_by_id_service(variant_id, db:Session):
     return variant
 
 def update_variant_service(variant_id, data, db:Session):
+    
     exist_variant = get_variant_by_id(db, variant_id)
     if exist_variant is None:
         raise HTTPException(status_code= 404, detail='variant is not found!')
+    cache_key = f"product:detail:{exist_variant.product_id}"
 
     if data.sku is not None:
         existing_sku = get_variant_by_sku(db, data.sku)
@@ -96,6 +102,8 @@ def update_variant_service(variant_id, data, db:Session):
 
     update_variant(db, exist_variant)
 
+    delete_cache(cache_key)
+
     return {
         "status": "success",
         "message": "Variant updated successfully!",
@@ -114,10 +122,14 @@ def get_variants_product_id_service(product_id:int, db:Session):
     return get_variants_by_product_id(db, product_id)
 
 def delete_variant_service(variant_id:int, db:Session):
+
     exist_variant = get_variant_by_id(db, variant_id)
+    
     if exist_variant is None:
         raise HTTPException(status_code= 404, detail='variant is not found!')
+    cache_key = f"product:detail:{exist_variant.product_id}"
     delete_variant(db, exist_variant)
+    delete_cache(cache_key)
     return{
         'status':'success',
         'message': 'variant deleted successfully!',
