@@ -17,3 +17,4 @@ typing_extensions==4.16.0
 uvicorn==0.52.1
 redis
 python-dotenv==1.0.1
+elasticsearch==8.15.0

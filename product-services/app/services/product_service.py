@@ -13,14 +13,19 @@ from app.repositories.product_repository import(
 from app.models.product import Product
 from app.utils.cache import get_cache, set_cache, delete_cache
 from app.schemas.product_schema import ProductDetailResponse
+from app.elasticsearch.product_index import index_product, update_product_index, delete_product_index
 
 
 def create_product_service(db:Session, data):
     exist_slug = get_product_by_slug(db, data.slug)
     if exist_slug:
         raise HTTPException(status_code=400, detail='Product slug is already exist')
+
     product = Product(**data.model_dump())
+
     create_product(db, product)
+    index_product(product)
+
     return {
         'status':"success",
         'message': 'Product add successfully !',
@@ -78,7 +83,7 @@ def update_product_service(db: Session, product_id: int, data):
         fetch_product.is_active = data.is_active
 
     update_product(db, fetch_product)
-
+    update_product_index(fetch_product)
     delete_cache(cache_key)
 
     return {
@@ -91,13 +96,19 @@ def delete_product_service(db: Session, product_id: int):
     cache_key = f"product:detail:{product_id}"
     exist_product = get_product_by_id(db, product_id)
 
+
+
     if exist_product is None:
         raise HTTPException(
             status_code=404,
             detail="Product not found"
         )
 
+    product_id = exist_product.id
+    
     delete_product(db, exist_product)
+
+    delete_product_index(product_id)
 
     delete_cache(cache_key)
 
