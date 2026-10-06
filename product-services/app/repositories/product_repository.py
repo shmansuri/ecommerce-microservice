@@ -7,7 +7,7 @@ def create_product(db:Session, product:Product) -> Product:
     db.commit()
     db.refresh(product)
     return product
-
+ 
 def get_product_by_id( db: Session, product_id: int) -> Product | None:
     return db.query(Product).filter(Product.id == product_id).first()
 
