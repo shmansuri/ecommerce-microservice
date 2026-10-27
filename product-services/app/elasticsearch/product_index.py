@@ -123,9 +123,13 @@ def delete_product_index(product_id):
         id=product_id
     )
 
-def search(query):
+def search_products(query, page, limit):
+
+    offset = (page-1)*limit
     response = es_client.search(
         index=INDEX_NAME,
+        from_=offset,
+        size=limit,
         query={
             "multi_match":{
                 'query':query,

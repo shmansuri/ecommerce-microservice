@@ -31,8 +31,8 @@ async def get_all_products_router(page:int = Query(1, ge=1), limit: int = Query(
     return get_all_products_service(db, page, limit)
 
 @router.get('/search', response_model=list[ProductResponse])
-async def search_product(q:str, page:int = Query(1, ge=1), limit:int=Query(20, ge=1, le=100), db:Session=Depends(get_db)):
-    return search_product_service(q, page, limit, db)
+async def search_product(q:str, page:int = Query(1, ge=1), limit:int=Query(20, ge=1, le=100)):
+    return search_product_service(q, page, limit)
 
 @router.get(
     "/details/{product_id}",
