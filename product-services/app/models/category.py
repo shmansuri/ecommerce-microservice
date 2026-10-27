@@ -2,7 +2,6 @@ from app.core.database import Base
 from sqlalchemy import Column, String, Integer, Boolean, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from app.models.product import Product
 
 
 class Category(Base):
