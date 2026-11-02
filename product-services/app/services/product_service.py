@@ -13,7 +13,7 @@ from app.repositories.product_repository import(
 from app.models.product import Product
 from app.utils.cache import get_cache, set_cache, delete_cache
 from app.schemas.product_schema import ProductDetailResponse
-from app.elasticsearch.product_index import index_product, update_product_index, delete_product_index
+from app.elasticsearch.product_index import index_product, update_product_index, delete_product_index, search_products
 
 
 def create_product_service(db:Session, data):
@@ -105,7 +105,7 @@ def delete_product_service(db: Session, product_id: int):
         )
 
     product_id = exist_product.id
-    
+
     delete_product(db, exist_product)
 
     delete_product_index(product_id)
@@ -114,8 +114,6 @@ def delete_product_service(db: Session, product_id: int):
 
     return exist_product
 
-def search_product_service(q, page, limit, db:Session):
-    return search_products(db, q, page, limit)
 
 
 def get_product_detail_service( product_id: int, db: Session):
@@ -136,7 +134,11 @@ def get_product_detail_service( product_id: int, db: Session):
         )
 
     product_data = (ProductDetailResponse.model_validate(product).model_dump(mode='json'))
-
+    #here set cache for the redis
     set_cache(key=cache_key, value=product_data, expire=300)
 
     return product
+
+#here we are searching product from elasticsearch
+def search_product_service(q, page, limit):
+    return search_products(q, page, limit)
